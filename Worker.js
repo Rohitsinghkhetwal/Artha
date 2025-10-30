@@ -49,38 +49,38 @@ const startWorker = async () => {
     });
 
     jobQueue.on('failed', async (job, err) => {
-      logger.error(`❌ Job ${job.id} failed after ${job.attemptsMade} attempts:`, err.message);
+      logger.error(`Job ${job.id} failed after ${job.attemptsMade} attempts:`, err.message);
 
 
       if (job.attemptsMade >= job.opts.attempts) {
-        logger.error(`💀 Job ${job.id} permanently failed - Max attempts reached`);
+        logger.error(` Job ${job.id} permanently failed - Max attempts reached`);
       } else {
-        logger.warn(`🔄 Job ${job.id} will be retried (Attempt ${job.attemptsMade}/${job.opts.attempts})`);
+        logger.warn(`Job ${job.id} will be retried (Attempt ${job.attemptsMade}/${job.opts.attempts})`);
       }
     });
 
 
     jobQueue.on('waiting', (jobId) => {
-      logger.debug(`⏳ Job ${jobId} is waiting to be processed`);
+      logger.debug(` Job ${jobId} is waiting to be processed`);
     });
 
 
     jobQueue.on('active', (job) => {
-      logger.debug(`🏃 Job ${job.id} is now active`);
+      logger.debug(` Job ${job.id} is now active`);
     });
 
 
     jobQueue.on('progress', (job, progress) => {
-      logger.debug(`📊 Job ${job.id} progress: ${progress}%`);
+      logger.debug(`Job ${job.id} progress: ${progress}%`);
     });
 
  
     jobQueue.on('stalled', (job) => {
-      logger.warn(`⚠️  Job ${job.id} stalled - Will be reprocessed`);
+      logger.warn(`  Job ${job.id} stalled - Will be reprocessed`);
     });
 
-    logger.success('✅ Worker is ready and listening for jobs...');
-    logger.info(`👂 Listening to queue: ${jobQueue.name}`);
+    logger.success(' Worker is ready and listening for jobs...');
+    logger.info(` Listening to queue: ${jobQueue.name}`);
 
     // Log queue stats periodically
     setInterval(async () => {
@@ -144,13 +144,7 @@ const checkAndCompleteImport = async (importLogId) => {
         importLog.duration = importLog.endTime - importLog.startTime;
         await importLog.save();
 
-        logger.success(`\n✅ Import completed: ${importLogId}`);
-        logger.info(`📊 Final Stats:`);
-        logger.info(`   - Total Imported: ${importLog.totalImported}`);
-        logger.info(`   - New Jobs: ${importLog.newJobs}`);
-        logger.info(`   - Updated Jobs: ${importLog.updatedJobs}`);
-        logger.info(`   - Failed Jobs: ${importLog.failedJobs}`);
-        logger.info(`   - Duration: ${importLog.duration}ms\n`);
+        logger.success(`\n Import completed: ${importLogId}`);
       }
     }
   } catch (error) {

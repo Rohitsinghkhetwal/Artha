@@ -22,7 +22,7 @@ const runJobImport = async () => {
 
   for (const apiUrl of API_URLS) {
     try {
-      logger.info(`\n📡 Processing: ${apiUrl}`);
+      logger.info(`\nProcessing: ${apiUrl}`);
 
       // Fetch jobs from API
       const jobs = await fetchJobsFromAPI(apiUrl);
@@ -35,25 +35,21 @@ const runJobImport = async () => {
       // Add jobs to queue
       const importLogId = await addJobsToQueue(jobs, apiUrl);
 
-      logger.success(`✅ Queued ${jobs.length} jobs (Log ID: ${importLogId})`);
+      logger.success(` Queued ${jobs.length} jobs (Log ID: ${importLogId})`);
       
       totalJobsFetched += jobs.length;
       totalAPIsProcessed++;
 
     } catch (error) {
-      logger.error(`❌ Error processing ${apiUrl}:`, error.message);
+      logger.error(` Error processing ${apiUrl}:`, error.message);
       totalAPIsFailed++;
       continue;
     }
   }
 
-  logger.info('\n========================================');
-  logger.info('✅ Job Import Completed');
-  logger.info(`📊 Summary:`);
   logger.info(`   - Total APIs Processed: ${totalAPIsProcessed}`);
   logger.info(`   - Total APIs Failed: ${totalAPIsFailed}`);
   logger.info(`   - Total Jobs Fetched: ${totalJobsFetched}`);
-  logger.info('========================================\n');
 
   return {
     totalAPIsProcessed,
@@ -69,8 +65,8 @@ const runJobImport = async () => {
 const startCronJob = () => {
   const schedule = process.env.CRON_SCHEDULE || '0 * * * *'; // Default: Every hour
 
-  logger.info(`⏰ Starting cron job with schedule: ${schedule}`);
-  logger.info(`📅 Next execution will be at: ${getNextCronTime(schedule)}`);
+  logger.info(` Starting cron job with schedule: ${schedule}`);
+  logger.info(` Next execution will be at: ${getNextCronTime(schedule)}`);
 
   cronJob = cron.schedule(schedule, async () => {
     try {
@@ -92,9 +88,9 @@ const startCronJob = () => {
 const stopCronJob = () => {
   if (cronJob) {
     cronJob.stop();
-    logger.warn('⏹️  Cron job stopped');
+    logger.warn(' Cron job stopped');
   } else {
-    logger.warn('⚠️  No cron job to stop');
+    logger.warn(' No cron job to stop');
   }
 };
 
