@@ -18,7 +18,6 @@ dotenv.config({
   path: "./config.env",
 });
 
-const CONCURRENCY = process.env.QUEUE_CONCURRENCY || 5;
 
 const startWorker = async () => {
   try {
@@ -28,7 +27,6 @@ const startWorker = async () => {
     logger.info("🔴 Connecting to Redis...");
     await connectRedis();
 
-    logger.success(` Starting worker with concurrency: ${CONCURRENCY}`);
 
     // Process jobs from queue
     workerQueue.process(async (job) => {
