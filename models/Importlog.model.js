@@ -33,7 +33,6 @@ const importLogSchema = new mongoose.Schema(
     },
     failures: [
       {
-        jobId: String,
         reason: String,
         timestamp: {
           type: Date,

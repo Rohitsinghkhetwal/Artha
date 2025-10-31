@@ -4,6 +4,8 @@ import {logger} from "../utils/logger.js";
 
 const TIMEOUT = 30000;
 
+//services for fetch jobs from apis 
+
 const fetchJobsFromAPI = async (apiUrl) => {
   try {
     logger.info(`Fetching jobs from: ${apiUrl}`);
@@ -20,9 +22,9 @@ const fetchJobsFromAPI = async (apiUrl) => {
     // logger.info("RESPONSE HERE ", response.data)
 
     const parsedData = await parseXMLToJSON(response.data);
-    console.log("PARSED DATA ",parsedData)
+    // console.log("PARSED DATA ",parsedData)
     const jobs = extractJobsFromXML(parsedData, apiUrl);
-    console.log("JOBS ---", jobs)
+    // console.log("JOBS ---", jobs)
 
     logger.success(`Fetched ${jobs.length} jobs from ${apiUrl}`);
     return jobs;
@@ -31,6 +33,7 @@ const fetchJobsFromAPI = async (apiUrl) => {
     throw error;
   }
 };
+
 
 
 const fetchFromMultipleAPIs = async (apiUrls) => {

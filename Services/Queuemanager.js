@@ -2,6 +2,7 @@ import importlogModel from "../models/Importlog.model.js"
 import { jobQueue } from "../bull/queue.js"
 import { logger } from "../utils/logger.js"
 
+// services that are used for the adding the jobs to the queue 
 const addJobsToQueue = async (jobs, sourceUrl) => {
   try {
     const importLog = await importlogModel.create({
@@ -13,27 +14,28 @@ const addJobsToQueue = async (jobs, sourceUrl) => {
 
     logger.info(`Created import log: ${importLog._id}`);
 
-    const batchSize = parseInt(process.env.BATCH_SIZE) || 50;
+    const batchSize = parseInt(process.env.BATCH_SIZE) || 10
     let addedCount = 0;
 
     for (let i = 0; i < jobs.length; i += batchSize) {
       const batch = jobs.slice(i, i + batchSize);
 
       const queueJobs = batch.map((jobData, index) => ({
-        name: `job-${Date.now()}-${i + index}`,
         data: {
           jobData,
           sourceUrl,
-          importLogId: importLog._id.toString(),
+          importLogId:importLog._id.toString(),
         },
         opts: {
           attempts: 3,
           backoff: {
             type: 'exponential',
-            delay: 2000,
+            delay: 5000,
           },
         },
       }));
+
+      // console.log("QUEUE ARE HERE => ", queueJobs)
 
       await jobQueue.addBulk(queueJobs);
       addedCount += batch.length;
@@ -49,9 +51,7 @@ const addJobsToQueue = async (jobs, sourceUrl) => {
   }
 };
 
-/**
- * Get queue statistics
- */
+
 const getQueueStats = async () => {
   try {
     const [waiting, active, completed, failed, delayed] = await Promise.all([
@@ -76,9 +76,7 @@ const getQueueStats = async () => {
   }
 };
 
-/**
- * Clean old completed/failed jobs from queue
- */
+
 const cleanQueue = async (olderThan = 24 * 60 * 60 * 1000) => {
   try {
     await jobQueue.clean(olderThan, 'completed');
@@ -90,17 +88,13 @@ const cleanQueue = async (olderThan = 24 * 60 * 60 * 1000) => {
   }
 };
 
-/**
- * Pause queue processing
- */
+
 const pauseQueue = async () => {
   await jobQueue.pause();
   logger.warn('Queue paused');
 };
 
-/**
- * Resume queue processing
- */
+
 const resumeQueue = async () => {
   await jobQueue.resume();
   logger.success('Queue resumed');

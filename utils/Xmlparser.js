@@ -47,9 +47,7 @@ const extractJobsFromXML = (parsedData, sourceUrl) => {
   return items.map((item, index) => normalizeJobData(item, sourceUrl, index));
 };
 
-/**
- * Normalize job data to consistent format
- */
+//Normalize job data 
 const normalizeJobData = (item, sourceUrl, index) => {
   const externalId = 
     item.guid?._ || 
@@ -100,9 +98,7 @@ const normalizeJobData = (item, sourceUrl, index) => {
   };
 };
 
-/**
- * Extract job type from item
- */
+// Job type extraction
 const extractJobType = (item) => {
   const typeStr = String(
     item.jobType || 
@@ -120,9 +116,7 @@ const extractJobType = (item) => {
   return 'full-time';
 };
 
-/**
- * Extract URL from item
- */
+// Url extraction form the xml 
 const extractURL = (item) => {
   return (
     item.link?.href || 
@@ -134,9 +128,8 @@ const extractURL = (item) => {
   );
 };
 
-/**
- * Clean text content
- */
+// Clean text content
+ 
 const cleanText = (text) => {
   if (!text) return '';
   return String(text)
@@ -145,9 +138,8 @@ const cleanText = (text) => {
     .substring(0, 500);
 };
 
-/**
- * Clean HTML content
- */
+// Clean HTML content
+
 const cleanHTML = (html) => {
   if (!html) return '';
   return String(html)
@@ -163,9 +155,7 @@ const cleanHTML = (html) => {
     .substring(0, 5000);
 };
 
-/**
- * Parse date string
- */
+//Parse date string
 const parseDate = (dateStr) => {
   if (!dateStr) return new Date();
   try {
@@ -176,9 +166,7 @@ const parseDate = (dateStr) => {
   }
 };
 
-/**
- * Generate hash from string
- */
+//Generate hash from string
 const generateHash = (str) => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {

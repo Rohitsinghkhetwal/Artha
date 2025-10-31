@@ -6,15 +6,11 @@ import { logger } from "../utils/logger.js"
 
 let cronJob = null;
 
-/**
- * Run job import for all API URLs
- * This function fetches jobs from all configured APIs and adds them to the queue
- */
+
+ // Run job import for all API URLs
+ // This function fetches jobs from all configured APIs and adds them to the queue
+ 
 const runJobImport = async () => {
-  logger.info('========================================');
-  logger.info('Starting Scheduled Job Import');
-  logger.info(` Time: ${new Date().toISOString()}`);
-  logger.info('========================================');
 
   let totalJobsFetched = 0;
   let totalAPIsProcessed = 0;
@@ -24,7 +20,6 @@ const runJobImport = async () => {
     try {
       logger.info(`\nProcessing: ${apiUrl}`);
 
-      // Fetch jobs from API
       const jobs = await fetchJobsFromAPI(apiUrl);
 
       if (jobs.length === 0) {
@@ -32,7 +27,6 @@ const runJobImport = async () => {
         continue;
       }
 
-      // Add jobs to queue
       const importLogId = await addJobsToQueue(jobs, apiUrl);
 
       logger.success(` Queued ${jobs.length} jobs (Log ID: ${importLogId})`);
@@ -47,9 +41,6 @@ const runJobImport = async () => {
     }
   }
 
-  logger.info(`   - Total APIs Processed: ${totalAPIsProcessed}`);
-  logger.info(`   - Total APIs Failed: ${totalAPIsFailed}`);
-  logger.info(`   - Total Jobs Fetched: ${totalJobsFetched}`);
 
   return {
     totalAPIsProcessed,
@@ -58,10 +49,7 @@ const runJobImport = async () => {
   };
 };
 
-/**
- * Start cron scheduler
- * Initializes and starts the cron job based on the schedule in environment variables
- */
+
 const startCronJob = () => {
   const schedule = process.env.CRON_SCHEDULE || '0 * * * *'; // Default: Every hour
 
@@ -81,10 +69,7 @@ const startCronJob = () => {
   return cronJob;
 };
 
-/**
- * Stop cron scheduler
- * Stops the currently running cron job
- */
+
 const stopCronJob = () => {
   if (cronJob) {
     cronJob.stop();
@@ -94,10 +79,7 @@ const stopCronJob = () => {
   }
 };
 
-/**
- * Get the status of the cron job
- * @returns {Object} - Status information
- */
+
 const getCronJobStatus = () => {
   return {
     isRunning: cronJob ? true : false,
@@ -106,14 +88,9 @@ const getCronJobStatus = () => {
   };
 };
 
-/**
- * Helper function to get next cron execution time
- * @param {string} schedule - Cron schedule string
- * @returns {string} - Next execution time
- */
 const getNextCronTime = (schedule) => {
   try {
-    // Simple approximation - for accurate calculation, use a cron parser library
+    // Simple approximation  for accurate calculation, use a cron parser library
     const now = new Date();
     const parts = schedule.split(' ');
     

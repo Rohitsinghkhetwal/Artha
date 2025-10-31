@@ -30,7 +30,7 @@ app.get("/health", (req, res) => {
   res.send("Hey Welcome ! ");
 });
 
-app.use("/api", importRoute)
+app.use("/api/v1", importRoute)
 
 const startServer = async () => {
   try {

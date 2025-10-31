@@ -1,26 +1,35 @@
-import JobModel from "../models/Job.model.js"
-import importlogModel from "../models/Importlog.model.js"
-import { logger } from "../utils/logger.js"
+import JobModel from "../models/Job.model.js";
+import importlogModel from "../models/Importlog.model.js";
+import { logger } from "../utils/logger.js";
 
+//this file is for processing the job that is coming the bull queue 
 
 
 const processJob = async (job) => {
   const { jobData, sourceUrl, importLogId } = job.data;
 
   try {
+    
     // Validate required fields
-    if (!jobData.externalId) {
-      throw new Error('Missing externalId');
-    }
-    if (!jobData.title) {
-      throw new Error('Missing title');
-    }
-    if (!jobData.company) {
-      throw new Error('Missing company');
+    if(!importLogId) {
+      throw new Error("Miising importLog")
     }
 
+    if (!jobData.title) {
+      throw new Error("Missing title");
+    }
+    if (!jobData.company) {
+      throw new Error("Missing company");
+    }
+
+    // if (importLogId === "" || importLogId === "undefined") {
+    //   return;
+    // }
+
     // Check if job already exists
-    const existingJob = await JobModel.findOne({ externalId: jobData.externalId });
+    const existingJob = await JobModel.findOne({
+      externalId: jobData.externalId,
+    });
 
     if (existingJob) {
       // UPDATE existing job
@@ -33,7 +42,7 @@ const processJob = async (job) => {
         { new: true }
       );
 
-      // Update import log - increment updated count
+      // Update  log - increment updated count
       await importlogModel.findByIdAndUpdate(importLogId, {
         $inc: {
           updatedJobs: 1,
@@ -44,7 +53,7 @@ const processJob = async (job) => {
       logger.info(`Updated job: ${jobData.title} (${jobData.externalId})`);
 
       return {
-        status: 'updated',
+        status: "updated",
         jobId: existingJob._id,
         title: jobData.title,
       };
@@ -60,34 +69,35 @@ const processJob = async (job) => {
         },
       });
 
-      logger.success(`Created new job: ${jobData.title} (${jobData.externalId})`);
+      logger.success(
+        `Created new job: ${jobData.title} (${jobData.externalId})`
+      );
 
       return {
-        status: 'created',
+        status: "created",
         jobId: newJob._id,
         title: jobData.title,
       };
     }
   } catch (error) {
-    logger.error(`Failed to process job ${jobData?.externalId}:`, error.message);
+    logger.error(
+      `Failed to process job ${jobData?.externalId}:`,
+      error.message
+    );
 
     // Log failure in import log
     await importlogModel.findByIdAndUpdate(importLogId, {
       $inc: { failedJobs: 1 },
       $push: {
         failures: {
-          jobId: jobData?.externalId || 'unknown',
           reason: error.message,
           timestamp: new Date(),
         },
       },
     });
 
-    // Re-throw error for Bull to handle retry
     throw error;
   }
 };
 
-export {
-  processJob,
-};
+export { processJob };

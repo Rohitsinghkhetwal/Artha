@@ -3,6 +3,8 @@ import { getQueueStats, addJobsToQueue } from "../Services/Queuemanager.js"
 import { fetchJobsFromAPI } from "../Services/Jobfecher.js"
 import { logger , } from "../utils/logger.js"
 
+//controller for the import logs 
+
 const getImportLogs = async (req, res) => {
   try {
     const { page = 1, limit = 20, status } = req.query;
@@ -37,10 +39,7 @@ const getImportLogs = async (req, res) => {
   }
 };
 
-/**
- * Get single import log by ID
- * @route GET /api/imports/:id
- */
+
 const getImportLogById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -67,10 +66,7 @@ const getImportLogById = async (req, res) => {
   }
 };
 
-/**
- * Get import statistics
- * @route GET /api/imports/stats
- */
+
 const getImportStats = async (req, res) => {
   try {
     const totalLogs = await importlogModel.countDocuments();
@@ -127,10 +123,7 @@ const getImportStats = async (req, res) => {
   }
 };
 
-/**
- * Get queue statistics
- * @route GET /api/imports/queue
- */
+
 const getQueueStat = async (req, res) => {
   try {
     const stats = await getQueueStats();
@@ -148,10 +141,7 @@ const getQueueStat = async (req, res) => {
   }
 };
 
-/**
- * Trigger manual import
- * @route POST /api/imports/trigger
- */
+
 const triggerManualImport = async (req, res) => {
   try {
     const { apiUrl } = req.body;
